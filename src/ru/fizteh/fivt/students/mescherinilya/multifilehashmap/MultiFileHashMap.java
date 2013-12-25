@@ -5,7 +5,8 @@ import java.util.*;
 public class MultiFileHashMap {
 
     static TableProvider provider;
-    static Table currentTable;
+    static ru.fizteh.fivt.storage.structured.Table currentTable;
+    static TableCondition currentTableCondition;
     static Map<String, Command> commandList;
 
 
@@ -23,11 +24,19 @@ public class MultiFileHashMap {
             String[] cmdArgs;
             if (cmd.contains(" ")) {
                 cmdName = cmd.substring(0, cmd.indexOf(" "));
-                cmdArgs = cmd.substring(cmd.indexOf(" ") + 1, cmd.length())
-                        .trim().split("\\s+");
+
+                if (cmdName.equals("create")) {
+                    cmdArgs = cmd.substring(cmd.indexOf(" ") + 1, cmd.length())
+                            .trim().split("[()]");
+                } else {
+                    cmdArgs = cmd.substring(cmd.indexOf(" ") + 1, cmd.length())
+                            .trim().split("\\s+");
+                }
+
                 for (String cmdArg : cmdArgs) {
                     cmdArg = cmdArg.trim();
                 }
+
             } else {
                 cmdName = cmd;
                 cmdArgs = new String[0];
@@ -73,7 +82,7 @@ public class MultiFileHashMap {
 
     public static void main(String[] args) {
 
-        commandList = new TreeMap<String, Command>();
+        commandList = new TreeMap<>();
 
         commandList.put("get", new CommandGet());
         commandList.put("put", new CommandPut());
@@ -88,6 +97,7 @@ public class MultiFileHashMap {
         commandList.put("rollback", new CommandRollback());
 
         TableProviderFactory factory = new TableProviderFactory();
+        currentTableCondition = new TableCondition();
 
         try {
             provider = factory.create(System.getProperty("fizteh.db.dir"));

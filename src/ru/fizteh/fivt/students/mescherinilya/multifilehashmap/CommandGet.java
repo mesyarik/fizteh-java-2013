@@ -1,5 +1,7 @@
 package ru.fizteh.fivt.students.mescherinilya.multifilehashmap;
 
+import ru.fizteh.fivt.storage.structured.Storeable;
+
 public class CommandGet implements Command {
 
     public CommandGet() {
@@ -22,7 +24,7 @@ public class CommandGet implements Command {
             System.out.println("no table");
             return;
         }
-        String value = MultiFileHashMap.currentTable.get(args[0]);
+        Storeable value = MultiFileHashMap.currentTable.get(args[0]);
         if (value == null) {
             System.out.println("not found");
         } else {

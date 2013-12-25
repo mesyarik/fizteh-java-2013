@@ -16,8 +16,9 @@ public class CommandUse implements Command {
     public void execute(String[] args) throws Exception {
 
         if (MultiFileHashMap.currentTable != null
-                && MultiFileHashMap.currentTable.changesCount() != 0) {
-            System.out.println(MultiFileHashMap.currentTable.changesCount() + " uncommitted changes");
+                && MultiFileHashMap.currentTableCondition.changesCount() != 0) {
+            System.out.println(MultiFileHashMap.currentTableCondition.changesCount()
+                    + " uncommitted changes");
             return;
         }
 
@@ -27,6 +28,8 @@ public class CommandUse implements Command {
         }
 
         MultiFileHashMap.currentTable = MultiFileHashMap.provider.getTable(args[0]);
+        MultiFileHashMap.currentTableCondition.clear();
+
         System.out.println("using " + args[0]);
     }
 }

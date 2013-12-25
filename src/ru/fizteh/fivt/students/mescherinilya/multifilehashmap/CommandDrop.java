@@ -28,6 +28,7 @@ public class CommandDrop implements Command {
         }
 
         System.out.println("dropped");
+        MultiFileHashMap.currentTableCondition.clear();
 
     }
 }

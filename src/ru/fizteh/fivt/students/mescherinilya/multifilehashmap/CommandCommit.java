@@ -19,6 +19,6 @@ public class CommandCommit implements Command {
         }
 
         System.out.println(MultiFileHashMap.currentTable.commit());
-
+        MultiFileHashMap.currentTableCondition.clear();
     }
 }

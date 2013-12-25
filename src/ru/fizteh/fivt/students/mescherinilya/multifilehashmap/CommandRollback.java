@@ -19,5 +19,7 @@ public class CommandRollback implements Command {
         }
 
         System.out.println(MultiFileHashMap.currentTable.rollback());
+        MultiFileHashMap.currentTableCondition.clear();
+
     }
 }

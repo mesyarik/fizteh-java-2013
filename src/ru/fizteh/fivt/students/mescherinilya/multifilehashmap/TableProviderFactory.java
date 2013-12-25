@@ -1,11 +1,12 @@
 package ru.fizteh.fivt.students.mescherinilya.multifilehashmap;
 
 import java.io.File;
+import java.io.IOException;
 
-public class TableProviderFactory implements ru.fizteh.fivt.storage.strings.TableProviderFactory {
+public class TableProviderFactory implements ru.fizteh.fivt.storage.structured.TableProviderFactory {
 
     @Override
-    public TableProvider create(String dir) throws IllegalArgumentException {
+    public TableProvider create(String dir) throws IllegalArgumentException, IOException {
 
         if (dir == null || dir.isEmpty() || dir.trim().isEmpty()) {
             throw new IllegalArgumentException("Name of the directory is empty!");

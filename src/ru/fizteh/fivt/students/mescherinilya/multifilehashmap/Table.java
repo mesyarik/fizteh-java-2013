@@ -1,31 +1,77 @@
 package ru.fizteh.fivt.students.mescherinilya.multifilehashmap;
 
+import ru.fizteh.fivt.storage.structured.ColumnFormatException;
+import ru.fizteh.fivt.storage.structured.Storeable;
+
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
-public class Table implements ru.fizteh.fivt.storage.strings.Table {
+public class Table implements ru.fizteh.fivt.storage.structured.Table {
 
     String name;
     String path;
     TableProvider ourProvider;
-    Map<String, String> entries;
-    Map<String, String> added;
-    Map<String, String> deleted;
 
-    public Table(String newName, TableProvider provider) {
+    List<Class<?>> valueTypes;
+    Map<String, Storeable> entries;
+    Map<String, Storeable> added;
+    Map<String, Storeable> deleted;
+
+    private boolean isSuitable(Storeable value) {
+        try {
+            for (int i = 0; i < valueTypes.size(); ++i) {
+                if (value.getColumnAt(i) == null) {
+                // null is suitable for any column
+                    continue;
+                }
+
+                Class valueType = valueTypes.get(i);
+                if (valueType == Integer.class) {
+                    value.getIntAt(i);
+                } else if (valueType == Long.class) {
+                    value.getLongAt(i);
+                } else if (valueType == Byte.class) {
+                    value.getByteAt(i);
+                } else if (valueType == Boolean.class) {
+                    value.getBooleanAt(i);
+                } else if (valueType == Double.class) {
+                    value.getDoubleAt(i);
+                } else if (valueType == Float.class) {
+                    value.getFloatAt(i);
+                } else { //valueType == String.class
+                    String name = value.getStringAt(i);
+                    if (ourProvider.isBadName(name)) {
+                        throw new IllegalArgumentException();
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+        // means that there was mismatch in some column
+        // or table column size is larger than storeable size
+            return false;
+        }
+        try {
+            value.getColumnAt(valueTypes.size());
+        } catch (IndexOutOfBoundsException e) {
+        // means that storeable size is not larger than table column size
+            return true;
+        }
+        return false;
+    }
+
+    public Table(String newName, List<Class<?>> types, TableProvider provider) {
         name = newName;
+        valueTypes = types;
         ourProvider = provider;
         path = provider.rootDir + File.separator + name;
-        entries = new TreeMap<String, String>();
-        added = new TreeMap<String, String>();
-        deleted = new TreeMap<String, String>();
+        entries = new TreeMap<>();
+        added = new TreeMap<>();
+        deleted = new TreeMap<>();
         try {
             readDatabase();
         } catch (IOException e) {
@@ -37,14 +83,13 @@ public class Table implements ru.fizteh.fivt.storage.strings.Table {
         return added.size() + deleted.size();
     }
 
-
     @Override
     public String getName() {
         return name;
     }
 
     @Override
-    public String get(String key) throws IllegalArgumentException {
+    public Storeable get(String key) throws IllegalArgumentException {
         if (ourProvider.isBadName(key)) {
             throw new IllegalArgumentException("Bad key!");
         }
@@ -58,15 +103,17 @@ public class Table implements ru.fizteh.fivt.storage.strings.Table {
     }
 
     @Override
-    public String put(String key, String value) throws IllegalArgumentException {
+    public Storeable put(String key, Storeable value) throws IllegalArgumentException {
+
         if (ourProvider.isBadName(key)) {
             throw new IllegalArgumentException("Bad key!");
         }
-        if (ourProvider.isBadName(value)) {
-            throw new IllegalArgumentException("Bad value!");
+
+        if (!isSuitable(value)) {
+            throw new ColumnFormatException("Bad value! Mismatch in column types or in quantity of columns!");
         }
 
-        String oldValue = null;
+        Storeable oldValue = null;
         if (added.containsKey(key)) {
             oldValue = added.get(key);
             added.remove(key);
@@ -82,11 +129,11 @@ public class Table implements ru.fizteh.fivt.storage.strings.Table {
     }
 
     @Override
-    public String remove(String key) throws IllegalArgumentException {
+    public Storeable remove(String key) throws IllegalArgumentException {
         if (ourProvider.isBadName(key)) {
             throw new IllegalArgumentException("Bad key!");
         }
-        String oldValue = null;
+        Storeable oldValue = null;
         if (added.containsKey(key)) {
             oldValue = added.get(key);
             added.remove(key);
@@ -139,6 +186,19 @@ public class Table implements ru.fizteh.fivt.storage.strings.Table {
         added.clear();
         deleted.clear();
         return oldSize;
+    }
+
+    @Override
+    public int getColumnsCount() {
+        return valueTypes.size();
+    }
+
+    @Override
+    public Class<?> getColumnType(int columnIndex) throws IndexOutOfBoundsException {
+        if (columnIndex < 0 || columnIndex >= valueTypes.size()) {
+            throw new IndexOutOfBoundsException();
+        }
+        return valueTypes.get(columnIndex);
     }
 
     private void readFile(String dirName, String fileName) throws Exception {
@@ -194,7 +254,7 @@ public class Table implements ru.fizteh.fivt.storage.strings.Table {
 
             offsets.add((int) database.length());
 
-            ArrayList<String> values = new ArrayList<String>();
+            ArrayList<String> values = new ArrayList<>();
 
             for (int i = 0; i < keys.size(); ++i) {
                 byte[] bytes = new byte[offsets.get(i + 1) - offsets.get(i)];
@@ -204,7 +264,9 @@ public class Table implements ru.fizteh.fivt.storage.strings.Table {
 
 
             for (int i = 0; i < keys.size(); ++i) {
-                entries.put(keys.get(i), values.get(i));
+                Storeable row = ourProvider.deserialize(this, values.get(i));
+
+                entries.put(keys.get(i), row);
             }
 
         } catch (EOFException e) {
@@ -215,7 +277,7 @@ public class Table implements ru.fizteh.fivt.storage.strings.Table {
 
     private void readDatabase() throws IOException {
 
-        entries = new TreeMap<String, String>();
+        entries = new TreeMap<>();
 
         for (Integer i = 0; i < 16; ++i) {
             String dirName = i.toString() + ".dir";
@@ -265,9 +327,9 @@ public class Table implements ru.fizteh.fivt.storage.strings.Table {
             return;
         }*/
 
-        ArrayList<TreeMap<String, String>> dirStorage = new ArrayList<TreeMap<String, String>>();
+        ArrayList<TreeMap<String, Storeable>> dirStorage = new ArrayList<>();
         for (int i = 0; i < 16; ++i) {
-            dirStorage.add(new TreeMap<String, String>());
+            dirStorage.add(new TreeMap<String, Storeable>());
         }
 
         Set<String> keySet = entries.keySet();
@@ -303,9 +365,9 @@ public class Table implements ru.fizteh.fivt.storage.strings.Table {
                     throw new IOException("Couldn't create the directory " + dirName);
                 }
 
-                ArrayList<TreeMap<String, String>> fileStorage = new ArrayList<TreeMap<String, String>>();
+                ArrayList<TreeMap<String, Storeable>> fileStorage = new ArrayList<>();
                 for (int j = 0; j < 16; ++j) {
-                    fileStorage.add(new TreeMap<String, String>());
+                    fileStorage.add(new TreeMap<String, Storeable>());
                 }
 
                 keySet = dirStorage.get(i).keySet();
@@ -347,7 +409,7 @@ public class Table implements ru.fizteh.fivt.storage.strings.Table {
                                 file.write(key.getBytes(StandardCharsets.UTF_8));
                                 file.write('\0');
                                 file.writeInt(offset);
-                                String value = fileStorage.get(j).get(key);
+                                String value = ourProvider.serialize(this, fileStorage.get(j).get(key));
                                 values.add(value);
                                 offset += value.getBytes(StandardCharsets.UTF_8).length;
                             }

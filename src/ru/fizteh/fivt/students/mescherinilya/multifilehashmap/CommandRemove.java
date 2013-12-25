@@ -21,6 +21,7 @@ public class CommandRemove implements Command {
             System.out.println("not found");
         }
 
+        MultiFileHashMap.currentTableCondition.remove(args[0]);
     }
 
     @Override
