@@ -102,7 +102,7 @@ public class MultiFileHashMap {
         try {
             provider = factory.create(System.getProperty("fizteh.db.dir"));
         } catch (Throwable e) {
-            System.err.println(e.getMessage());
+            //System.err.println(e.getMessage());
             System.exit(1);
         }
 
