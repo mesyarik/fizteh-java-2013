@@ -33,10 +33,6 @@ public class MultiFileHashMap {
                             .trim().split("\\s+");
                 }
 
-                for (String cmdArg : cmdArgs) {
-//System.out.println("+" + cmdArg + "+");
-                }
-
             } else {
                 cmdName = cmd;
                 cmdArgs = new String[0];

@@ -20,7 +20,11 @@ public class CommandCreate implements Command {
         String[] typenames = args[1].split("\\s+");
 
         ArrayList<Class<?>> columnTypes = new ArrayList<>();
-        //System.out.println("+" + args[1] + "+");
+
+        if (typenames.length == 0) {
+            throw new IllegalArgumentException("Wrong type (column types were not specified)");
+        }
+
         for (String typename : typenames) {
             typename = typename.trim();
 
@@ -39,7 +43,7 @@ public class CommandCreate implements Command {
             else if (typename.equals("String"))
                 columnTypes.add(String.class);
             else {
-                throw new Exception("Unsupported type in table: " + typename);
+                throw new IllegalArgumentException("Wrong type (" + typename + ")");
             }
         }
 
