@@ -23,18 +23,18 @@ public class MultiFileHashMap {
             String cmdName;
             String[] cmdArgs;
             if (cmd.contains(" ")) {
-                cmdName = cmd.substring(0, cmd.indexOf(" "));
+                cmdName = cmd.substring(0, cmd.indexOf(" ")).trim();
 
                 if (cmdName.equals("create")) {
                     cmdArgs = cmd.substring(cmd.indexOf(" ") + 1, cmd.length())
-                            .trim().split("[()]");
+                            .trim().split("\\s*\\(|\\)\\s*");
                 } else {
                     cmdArgs = cmd.substring(cmd.indexOf(" ") + 1, cmd.length())
                             .trim().split("\\s+");
                 }
 
                 for (String cmdArg : cmdArgs) {
-                    cmdArg = cmdArg.trim();
+//System.out.println("+" + cmdArg + "+");
                 }
 
             } else {
@@ -53,6 +53,7 @@ public class MultiFileHashMap {
                     return false;
                 }
                 try {
+                    System.out.println(cmdArgs[0] + "+");
                     command.execute(cmdArgs);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
@@ -101,8 +102,10 @@ public class MultiFileHashMap {
 
         try {
             provider = factory.create(System.getProperty("fizteh.db.dir"));
+
         } catch (Throwable e) {
-            //System.err.println(e.getMessage());
+            System.out.println(System.getProperty("fizteh.db.dir"));
+            System.err.println(e.getMessage());
             System.exit(1);
         }
 

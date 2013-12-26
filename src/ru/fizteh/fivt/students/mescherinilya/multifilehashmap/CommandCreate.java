@@ -20,7 +20,7 @@ public class CommandCreate implements Command {
         String[] typenames = args[1].split("\\s+");
 
         ArrayList<Class<?>> columnTypes = new ArrayList<>();
-
+        //System.out.println("+" + args[1] + "+");
         for (String typename : typenames) {
             typename = typename.trim();
 
