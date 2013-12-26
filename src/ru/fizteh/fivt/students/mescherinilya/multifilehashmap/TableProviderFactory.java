@@ -16,7 +16,7 @@ public class TableProviderFactory implements ru.fizteh.fivt.storage.structured.T
 
 
         if (!newDir.exists() && !newDir.mkdirs()) {
-            throw new IllegalArgumentException("The directory doesn't exist and couldn't be created.");
+            throw new IOException("The directory doesn't exist and couldn't be created.");
         }
 
         if (!newDir.isDirectory() || !newDir.canRead() || !newDir.canWrite()) {
