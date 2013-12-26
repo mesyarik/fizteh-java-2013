@@ -183,7 +183,8 @@ public class TableProvider implements ru.fizteh.fivt.storage.structured.TablePro
             }
 
             if (!victimTable.delete()) {
-                System.err.println("Couldn't delete the directory " + name);
+                throw new IllegalArgumentException("Couldn't delete the directory " + name);
+                //System.err.println("Couldn't delete the directory " + name);
             }
 
             tables.remove(name);
