@@ -49,7 +49,6 @@ public class MultiFileHashMap {
                     return false;
                 }
                 try {
-                    System.out.println(cmdArgs[0] + "+");
                     command.execute(cmdArgs);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());

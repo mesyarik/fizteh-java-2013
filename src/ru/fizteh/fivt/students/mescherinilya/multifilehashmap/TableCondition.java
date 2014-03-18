@@ -3,12 +3,18 @@ package ru.fizteh.fivt.students.mescherinilya.multifilehashmap;
 import ru.fizteh.fivt.storage.structured.Storeable;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 // this class is for watching how many uncommitted changes are there in each table
 public class TableCondition {
 
     Map<String, Storeable> added;
     Map<String, Storeable> deleted;
+
+    TableCondition() {
+        added = new TreeMap<>();
+        deleted = new TreeMap<>();
+    }
 
     void put(String key, Storeable value) {
 
@@ -43,8 +49,11 @@ public class TableCondition {
     }
 
     void clear() {
+        if (added == null)
+            System.out.println("fuck you!");
         added.clear();
         deleted.clear();
+        System.out.println("We are in tablecondition.clear method!");
     }
 
 }
