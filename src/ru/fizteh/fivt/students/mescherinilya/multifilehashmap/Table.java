@@ -44,13 +44,14 @@ public class Table implements ru.fizteh.fivt.storage.structured.Table {
                     value.getFloatAt(i);
                 } else { //valueType == String.class
                     String name = value.getStringAt(i);
-                    if (ourProvider.isBadName(name)) {
+                    if (!name.isEmpty() && ourProvider.isBadName(name)) {
                         throw new IllegalArgumentException();
                     }
                 }
 
             }
         } catch (Exception e) {
+            System.out.print("fuck!");
         // means that there was mismatch in some column
         // or table column size is larger than storeable size
             return false;
