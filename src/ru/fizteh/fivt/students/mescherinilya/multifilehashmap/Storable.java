@@ -11,8 +11,14 @@ public class Storable implements Storeable {
     private ArrayList<Class> types;
 
     public Storable(ArrayList<Class> classes) {
+        //System.out.print(classes.size());
+
         types = classes;
-        contents = new ArrayList<>(types.size());
+        contents = new ArrayList<>();
+        for (int i = 0; i < types.size(); ++i)
+            contents.add(null);
+        //System.out.print(contents.size());
+
     }
 
     public Storable(ArrayList<Class> classes, ArrayList<Object> values) {
@@ -29,12 +35,14 @@ public class Storable implements Storeable {
         if (columnIndex < 0 || columnIndex >= contents.size()) {
             throw new IndexOutOfBoundsException();
         }
+
         if (!value.getClass().equals(types.get(columnIndex))) {
             throw new ColumnFormatException("Type mismatch at " + columnIndex + "th position!"
                     + "Expected " + types.get(columnIndex).getName()
                     + " but was given " + value.getClass().getName());
         }
         contents.set(columnIndex, value);
+
     }
 
     @Override
@@ -50,7 +58,7 @@ public class Storable implements Storeable {
         if (columnIndex < 0 || columnIndex >= contents.size()) {
             throw new IndexOutOfBoundsException();
         }
-        if (!types.get(columnIndex).equals(Integer.TYPE)) {
+        if (!types.get(columnIndex).equals(Integer.class)) {
             throw new ColumnFormatException("You are requesting Integer, but there is "
                     + types.get(columnIndex).getName() + "!");
         }
@@ -62,7 +70,7 @@ public class Storable implements Storeable {
         if (columnIndex < 0 || columnIndex >= contents.size()) {
             throw new IndexOutOfBoundsException();
         }
-        if (!types.get(columnIndex).equals(Long.TYPE)) {
+        if (!types.get(columnIndex).equals(Long.class)) {
             throw new ColumnFormatException("You are requesting Long, but there is "
                     + types.get(columnIndex).getName() + "!");
         }
@@ -74,7 +82,7 @@ public class Storable implements Storeable {
         if (columnIndex < 0 || columnIndex >= contents.size()) {
             throw new IndexOutOfBoundsException();
         }
-        if (!types.get(columnIndex).equals(Byte.TYPE)) {
+        if (!types.get(columnIndex).equals(Byte.class)) {
             throw new ColumnFormatException("You are requesting Byte, but there is "
                     + types.get(columnIndex).getName() + "!");
         }
@@ -86,7 +94,7 @@ public class Storable implements Storeable {
         if (columnIndex < 0 || columnIndex >= contents.size()) {
             throw new IndexOutOfBoundsException();
         }
-        if (!types.get(columnIndex).equals(Float.TYPE)) {
+        if (!types.get(columnIndex).equals(Float.class)) {
             throw new ColumnFormatException("You are requesting Float, but there is "
                     + types.get(columnIndex).getName() + "!");
         }
@@ -98,7 +106,7 @@ public class Storable implements Storeable {
         if (columnIndex < 0 || columnIndex >= contents.size()) {
             throw new IndexOutOfBoundsException();
         }
-        if (!types.get(columnIndex).equals(Double.TYPE)) {
+        if (!types.get(columnIndex).equals(Double.class)) {
             throw new ColumnFormatException("You are requesting Double, but there is "
                     + types.get(columnIndex).getName() + "!");
         }
@@ -110,7 +118,7 @@ public class Storable implements Storeable {
         if (columnIndex < 0 || columnIndex >= contents.size()) {
             throw new IndexOutOfBoundsException();
         }
-        if (!types.get(columnIndex).equals(Boolean.TYPE)) {
+        if (!types.get(columnIndex).equals(Boolean.class)) {
             throw new ColumnFormatException("You are requesting Boolean, but there is "
                     + types.get(columnIndex).getName() + "!");
         }

@@ -49,11 +49,8 @@ public class TableCondition {
     }
 
     void clear() {
-        if (added == null)
-            System.out.println("fuck you!");
         added.clear();
         deleted.clear();
-        System.out.println("We are in tablecondition.clear method!");
     }
 
 }

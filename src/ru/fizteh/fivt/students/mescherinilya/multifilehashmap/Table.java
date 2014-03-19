@@ -105,6 +105,8 @@ public class Table implements ru.fizteh.fivt.storage.structured.Table {
     @Override
     public Storeable put(String key, Storeable value) throws IllegalArgumentException {
 
+        //System.out.print(ourProvider == null);
+
         if (ourProvider.isBadName(key)) {
             throw new IllegalArgumentException("Bad key!");
         }
@@ -114,6 +116,9 @@ public class Table implements ru.fizteh.fivt.storage.structured.Table {
         }
 
         Storeable oldValue = null;
+
+        //System.out.print(added == null || deleted == null || entries == null);
+
         if (added.containsKey(key)) {
             oldValue = added.get(key);
             added.remove(key);
@@ -125,6 +130,7 @@ public class Table implements ru.fizteh.fivt.storage.structured.Table {
         if (!entries.containsKey(key) || !entries.get(key).equals(value)) {
             added.put(key, value);
         }
+
         return oldValue;
     }
 

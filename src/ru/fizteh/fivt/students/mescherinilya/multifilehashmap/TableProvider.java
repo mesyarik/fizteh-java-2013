@@ -221,19 +221,20 @@ public class TableProvider implements ru.fizteh.fivt.storage.structured.TablePro
                 }
                 String core = value.substring(0, value.indexOf("</col>"));
                 Class<?> columnType = table.getColumnType(i);
+                //System.out.print(columnType.getName());
                 Object parsed = null;
                 try {
-                    if (columnType == Integer.TYPE) {
+                    if (columnType == Integer.class) {
                         parsed = Integer.parseInt(core);
-                    } else if (columnType == Long.TYPE) {
+                    } else if (columnType == Long.class) {
                         parsed = Long.parseLong(core);
-                    } else if (columnType == Byte.TYPE) {
+                    } else if (columnType == Byte.class) {
                         parsed = Byte.parseByte(core);
-                    } else if (columnType == Boolean.TYPE) {
+                    } else if (columnType == Boolean.class) {
                         parsed = Boolean.parseBoolean(core);
-                    } else if (columnType == Double.TYPE) {
+                    } else if (columnType == Double.class) {
                         parsed = Double.parseDouble(core);
-                    } else if (columnType == Float.TYPE) {
+                    } else if (columnType == Float.class) {
                         parsed = Float.parseFloat(core);
                     } else {
                         parsed = core;
@@ -242,8 +243,11 @@ public class TableProvider implements ru.fizteh.fivt.storage.structured.TablePro
                     throw new ParseException("Couldn't parse " + columnType.getName()
                             + " from the string \"" + core + "\"!", 0);
                 }
+                //System.out.print(parsed.getClass().getName());
                 result.setColumnAt(i, parsed);
                 value = value.substring(core.length() + 6);
+                //System.out.print("ffgdff");
+
             } else if (value.length() == 0) {
                 throw new ParseException("Unexpected end of string!", 0);
             } else {
@@ -284,6 +288,7 @@ public class TableProvider implements ru.fizteh.fivt.storage.structured.TablePro
         for (int i = 0; i < table.getColumnsCount(); ++i) {
             classes.add(table.getColumnType(i));
         }
+        //System.out.print(classes.size());
         return new Storable(classes);
     }
 
