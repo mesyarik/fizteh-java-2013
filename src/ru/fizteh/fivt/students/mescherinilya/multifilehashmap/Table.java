@@ -51,7 +51,6 @@ public class Table implements ru.fizteh.fivt.storage.structured.Table {
 
             }
         } catch (Exception e) {
-            System.out.print("fuck!");
         // means that there was mismatch in some column
         // or table column size is larger than storeable size
             return false;

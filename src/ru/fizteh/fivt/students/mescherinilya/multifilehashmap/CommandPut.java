@@ -18,6 +18,12 @@ public class CommandPut implements Command {
             return;
         }
 
+        //govnocode again
+        for (int i = 0; i < args[0].length(); ++i) {
+            if (Character.isWhitespace(args[0].charAt(i)))
+                throw new ParseException("There must be no whitespace characters in the key!", i);
+        }
+
         Storeable deserialized = MultiFileHashMap.provider.deserialize(
                 MultiFileHashMap.currentTable, args[1]);
 
