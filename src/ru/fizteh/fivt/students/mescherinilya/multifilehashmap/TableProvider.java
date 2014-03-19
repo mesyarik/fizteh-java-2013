@@ -106,8 +106,8 @@ public class TableProvider implements ru.fizteh.fivt.storage.structured.TablePro
             throw new IllegalArgumentException("Bad table name!");
         }
 
-        if (columnTypes == null) {
-            throw new IllegalArgumentException("List of column types is null!");
+        if (columnTypes == null || columnTypes.size() == 0) {
+            throw new IllegalArgumentException("List of column types is null or empty!");
         }
 
         if (tables.containsKey(name)) {
