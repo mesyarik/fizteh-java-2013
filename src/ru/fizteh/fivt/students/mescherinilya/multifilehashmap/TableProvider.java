@@ -140,7 +140,8 @@ public class TableProvider implements ru.fizteh.fivt.storage.structured.TablePro
                     } else if (columnType == String.class) {
                         signature = signature + "String ";
                     } else {
-                        throw new IOException("Something very strange happened while creating table...");
+                        throw new IllegalArgumentException(
+                                "Something very strange happened while creating table...");
                     }
                 }
                 sgnFile.writeBytes(signature);
