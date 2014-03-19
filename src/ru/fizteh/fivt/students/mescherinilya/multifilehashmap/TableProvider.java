@@ -237,7 +237,13 @@ public class TableProvider implements ru.fizteh.fivt.storage.structured.TablePro
                     } else if (columnType == Float.class) {
                         parsed = Float.parseFloat(core);
                     } else {
+                        for (int j = 0; j < core.length(); ++j) {
+                            if (Character.isWhitespace(core.charAt(j)))
+                                throw new ParseException(
+                                        "There must be no whitespace characters in values!", j);
+                        }
                         parsed = core;
+
                     }
                 } catch (NumberFormatException e) {
                     throw new ParseException("Couldn't parse " + columnType.getName()
